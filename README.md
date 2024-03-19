@@ -1,8 +1,5 @@
 [Video of the Fofaya](https://www.youtube.com/watch?v=dQw4w9WgXcQ)
 
-https://github.com/Sekuora/Fofaya-Tracker/assets/162371601/02297738-52f5-4c72-9d27-50bad6b48129
-
-
 # Fofaya Tracker
 This is my first application project in Python, But I've been using Python for around 4-5 months now.
 This app is a Time Tracker that monitors the time spent on different applications on a Windows machine. This project was developed with the assistance of GitHub Copilot, an AI-powered code completion tool.
