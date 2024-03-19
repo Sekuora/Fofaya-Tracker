@@ -1,5 +1,7 @@
 [Video of the Fofaya](https://www.youtube.com/watch?v=dQw4w9WgXcQ)
-https://github.com/Sekuora/Fofaya-Tracker/assets/162371601/ee2c389a-baaa-4b10-b423-53f2a4e5c552
+
+https://github.com/Sekuora/Fofaya-Tracker/assets/162371601/4b20ecca-f564-4b8d-a482-31e97d0306bd
+
 
 # Fofaya Tracker
 This is my first application project in Python, But I've been using Python for around 4-5 months now.
@@ -35,7 +37,6 @@ choose which day to show in the graphs. And in filters, currently you can only f
 every app.
 
 ## Compile Instructions
-
 1. Ensure Python 3.x is installed on your system.
 2. Optionally, create a virtual environment.
 3. Install the required libraries by running the following command in your terminal:
