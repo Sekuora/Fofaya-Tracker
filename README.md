@@ -5,7 +5,7 @@ This is my first application project in Python, But I've been using Python for a
 This app is a Time Tracker that monitors the time spent on different applications on a Windows machine. This project was developed with the assistance of GitHub Copilot, an AI-powered code completion tool.
 
 ## Project Description
-The Time Tracker is a Python application that uses the PySide6.QtCore, psutil, win32process, win32gui, and pygetwindow libraries to track the active application on a Windows machine and record the time spent on each application.
+The Fofaya Tracker is a Python application that uses the PySide6.QtCore, psutil, win32process, win32gui, and pygetwindow libraries to track the active application on a Windows machine and record the time spent on each application.
 
 The code is a bit messy and could be improved. I am considering working on that, but as the application already works with most of the features I wanted, I don't plan on making significant changes in the near future.
 
