@@ -10,9 +10,8 @@ The Fofaya Tracker is a Python application that uses the PySide6.QtCore, psutil,
 The code is a bit messy and could be improved.
 
 ## Installation
-In the releases there is an installer.
 
-**1. Installer:** Download the installer from the releases section and follow the installation prompts.
+**Installer:** Download the installer from the releases section and follow the installation prompts.
 
 ## Usage
 **1. Start Tracking:** After installation, run the application. You just need to press the start tracking button.
