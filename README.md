@@ -1,5 +1,6 @@
 [Video of the Fofaya](https://www.youtube.com/watch?v=dQw4w9WgXcQ)
 
+
 # Fofaya Tracker
 This is my first application project in Python, But I've been using Python for around 4-5 months now.
 This app is a Time Tracker that monitors the time spent on different applications on a Windows machine. This project was developed with the assistance of GitHub Copilot, an AI-powered code completion tool.
@@ -37,7 +38,11 @@ every app.
 
 1. Ensure Python 3.x is installed on your system.
 2. Optionally, create a virtual environment.
-3. Install the required libraries by running the following command in your terminal:
+3. Install the
+
+https://github.com/Sekuora/Fofaya-Tracker/assets/162371601/ee2c389a-baaa-4b10-b423-53f2a4e5c552
+
+ required libraries by running the following command in your terminal:
     ```bash
     pip install -r requirements.txt
     ```
