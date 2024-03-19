@@ -12,9 +12,9 @@ The code is a bit messy and could be improved.
 ## Installation
 There are two ways to install the Time Tracker:
 
-1. Installer: Download the installer from the releases section and follow the installation prompts.
+### 1. Installer: Download the installer from the releases section and follow the installation prompts.
 
-2. ZIP File: Download the ZIP file from the releases section, extract the files, and run the main script.
+### 2. ZIP File: Download the ZIP file from the releases section, extract the files, and run the main script.
 
 ## Usage
 1. Start Tracking: After installation, run the application. You just need to press the start tracking button.
