@@ -40,7 +40,7 @@ As this is my first Python project, I welcome any suggestions or contributions t
 I would like to thank GitHub Copilot for assisting me in this project. The AI-powered code completion tool was invaluable in helping me navigate the Python language and libraries.
 
 ## License
-This project is open source and available under the MIT License.
+This project is open source and available under the GPL-3.0 license.
 
 
 
