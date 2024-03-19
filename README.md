@@ -27,7 +27,7 @@ There are two ways to install the Time Tracker:
    - Open Logs: The main way to check the logged data from the tracker.
    - System Tray: Makes the app run on the background. With right-click on tray icon you re-open the app.
 
-4. Logs Window: The logs window allows to visualize the data gathered from the tracker. It is in a scale of 16 hours,
+**4. Logs Window:** The logs window allows to visualize the data gathered from the tracker. It is in a scale of 16 hours,
    as it is intended for productivity I considered the max to be 16 hours a day. Through the calendar widget you can 
    choose which day to show in the graphs. And in filters, currently you can only filter the total time spent on 
    every app.
