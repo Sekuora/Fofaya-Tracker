@@ -1,6 +1,6 @@
 [Video of the Fofaya](https://www.youtube.com/watch?v=dQw4w9WgXcQ)
 
-https://github.com/Sekuora/Fofaya-Tracker/assets/162371601/4b20ecca-f564-4b8d-a482-31e97d0306bd
+https://github.com/Sekuora/Fofaya-Tracker/assets/162371601/02297738-52f5-4c72-9d27-50bad6b48129
 
 
 # Fofaya Tracker
@@ -38,7 +38,9 @@ every app.
 
 ## Compile Instructions
 1. Ensure Python 3.x is installed on your system.
-2. Optionally, create a virtual environment.
+2. Optionally, create
+
+ a virtual environment.
 3. Install the required libraries by running the following command in your terminal:
     ```bash
     pip install -r requirements.txt
