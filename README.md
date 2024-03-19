@@ -1,22 +1,22 @@
 [Video of the Fofaya](https://www.youtube.com/watch?v=dQw4w9WgXcQ)
 
-#Fofaya Tracker
+# Fofaya Tracker
 This is my first application project in Python, But I've been using Python for around 4-5 months now.
 This app is a Time Tracker that monitors the time spent on different applications on a Windows machine. This project was developed with the assistance of GitHub Copilot, an AI-powered code completion tool.
 
-##Project Description
+## Project Description
 The Time Tracker is a Python application that uses the PySide6.QtCore, psutil, win32process, win32gui, and pygetwindow libraries to track the active application on a Windows machine and record the time spent on each application.
 
 The code is a bit messy and could be improved. I am considering working on that, but as the application already works with most of the features I wanted, I don't plan on making significant changes in the near future.
 
-##Installation
+## Installation
 There are two ways to install the Time Tracker:
 
 1. Installer: Download the installer from the releases section and follow the installation prompts.
 
 2. ZIP File: Download the ZIP file from the releases section, extract the files, and run the main script.
 
-##Usage
+## Usage
 1. Start Tracking: After installation, run the application. You just need to press the start tracking button.
    
 2. Idle: Idle clock will be turned on by default when the app is the tracker itself and when checking windows   
@@ -32,13 +32,13 @@ There are two ways to install the Time Tracker:
    choose which day to show in the graphs. And in filters, currently you can only filter the total time spent on 
    every app.
 
-##Contributions
+## Contributions
 As this is my first Python project, I welcome any suggestions or contributions to improve the code or add new features. Please feel free to open an issue or submit a pull request.
 
-##Acknowledgements
+## Acknowledgements
 I would like to thank GitHub Copilot for assisting me in this project. The AI-powered code completion tool was invaluable in helping me navigate the Python language and libraries.
 
-##License
+## License
 This project is open source and available under the MIT License.
 
 
