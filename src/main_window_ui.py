@@ -3,18 +3,11 @@
 # This file is part of a software tool distributed under the GNU General Public License.
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <https://www.gnu.org/licenses/>.
-from PySide6.QtWidgets import QMainWindow, QWidgetAction, QLabel, QToolButton, QWidget, QVBoxLayout, QHBoxLayout, QSizePolicy, QSystemTrayIcon, QMenu, QApplication, QSpacerItem
-from PySide6.QtGui import QPalette, QColor, QFont, QIcon, QAction, QPainter, QBrush
+from PySide6.QtWidgets import QMainWindow, QLabel, QToolButton, QWidget, QVBoxLayout, QHBoxLayout, QSystemTrayIcon, QMenu, QApplication
+from PySide6.QtGui import QPalette, QColor, QFont, QIcon, QAction
 from PySide6.QtCore import Qt, QSize, QPoint, QEvent, QTimer, QPropertyAnimation, QEasingCurve, QRect
-import sys
 import os
 
-
-class CustomMenu(QMenu):
-    def mouseMoveEvent(self, event):
-        if not self.geometry().adjusted(-50, -50, 50, 50).contains(event.globalPos()):
-            self.close()
-        super().mouseMoveEvent(event)
 
 class MainWindow(QMainWindow):
     def __init__(self, tracker):

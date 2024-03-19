@@ -3,6 +3,15 @@
 # This file is part of a software tool distributed under the GNU General Public License.
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <https://www.gnu.org/licenses/>.
+
+# Compile Instructions:
+# 1. Ensure Python 3.x is installed on your system.
+# 2. Optionally, create a virtual environment.
+# 3. Install the required libraries by running `pip install -r requirements.txt`
+# 4. PyInstaller is included in the requirements and it is what I used to compile the program.
+# 5. Compile the program with `pyinstaller app.spec`.
+# 6. The compiled program will be in the `dist` directory.
+
 import os
 from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import QApplication
