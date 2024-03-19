@@ -33,8 +33,23 @@ as it is intended for productivity I considered the max to be 16 hours a day. Th
 choose which day to show in the graphs. And in filters, currently you can only filter the total time spent on 
 every app.
 
+## Compile Instructions
+
+1. Ensure Python 3.x is installed on your system.
+2. Optionally, create a virtual environment.
+3. Install the required libraries by running the following command in your terminal:
+    ```bash
+    pip install -r requirements.txt
+    ```
+4. PyInstaller is included in the requirements and it is what I used to compile the program.
+5. Compile the program with the following command:
+    ```bash
+    pyinstaller app.spec
+    ```
+6. The compiled program will be in the `dist` directory.
+
 ## Contributions
-As this is my first Python project, I welcome any suggestions or contributions to improve the code or add new features. Please feel free to open an issue or submit a pull request.
+I welcome any suggestions or contributions from more experienced developers to improve the code or add new features. Please feel free to open an issue or submit a pull request.
 
 ## Acknowledgements
 I would like to thank GitHub Copilot for assisting me in this project. The AI-powered code completion tool was invaluable in helping me navigate the Python language and libraries.
