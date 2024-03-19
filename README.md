@@ -34,10 +34,9 @@ choose which day to show in the graphs. And in filters, currently you can only f
 every app.
 
 ## Compile Instructions
-1. Ensure Python 3.x is installed on your system.
-2. Optionally, create
 
- a virtual environment.
+1. Ensure Python 3.x is installed on your system.
+2. Optionally, create a virtual environment.
 3. Install the required libraries by running the following command in your terminal:
     ```bash
     pip install -r requirements.txt
@@ -48,6 +47,7 @@ every app.
     pyinstaller app.spec
     ```
 6. The compiled program will be in the `dist` directory.
+
 
 ## Contributions
 I welcome any suggestions or contributions from more experienced developers to improve the code or add new features. Please feel free to open an issue or submit a pull request.
