@@ -1,4 +1,8 @@
 # time_tracker.py module
+# Copyright (C) 2024 Sekuora
+# This file is part of a software tool distributed under the GNU General Public License.
+# You should have received a copy of the GNU General Public License
+# along with this program. If not, see <https://www.gnu.org/licenses/>.
 from PySide6.QtCore import QThread, Signal
 import psutil
 import win32process

@@ -1,4 +1,8 @@
 # time_track_data.py module
+# Copyright (C) 2024 Sekuora
+# This file is part of a software tool distributed under the GNU General Public License.
+# You should have received a copy of the GNU General Public License
+# along with this program. If not, see <https://www.gnu.org/licenses/>.
 import os
 import json
 from .tracker_globals import process_time

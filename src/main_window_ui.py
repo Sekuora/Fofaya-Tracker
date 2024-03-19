@@ -1,3 +1,8 @@
+# main_window_ui.py
+# Copyright (C) 2024 Sekuora
+# This file is part of a software tool distributed under the GNU General Public License.
+# You should have received a copy of the GNU General Public License
+# along with this program. If not, see <https://www.gnu.org/licenses/>.
 from PySide6.QtWidgets import QMainWindow, QWidgetAction, QLabel, QToolButton, QWidget, QVBoxLayout, QHBoxLayout, QSizePolicy, QSystemTrayIcon, QMenu, QApplication, QSpacerItem
 from PySide6.QtGui import QPalette, QColor, QFont, QIcon, QAction, QPainter, QBrush
 from PySide6.QtCore import Qt, QSize, QPoint, QEvent, QTimer, QPropertyAnimation, QEasingCurve, QRect
@@ -782,7 +787,6 @@ class MainWindow(QMainWindow):
 
     def closeEvent(self, event):
 
-        self.time_tracker.stop()
         if hasattr(self, 'logs_window'):
             self.logs_window.close()
         if hasattr(self, 'excluded_apps_window'):
