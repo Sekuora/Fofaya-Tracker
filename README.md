@@ -12,17 +12,17 @@ The code is a bit messy and could be improved.
 ## Installation
 There are two ways to install the Time Tracker:
 
-### 1. Installer: Download the installer from the releases section and follow the installation prompts.
+**1. Installer:** Download the installer from the releases section and follow the installation prompts.
 
-### 2. ZIP File: Download the ZIP file from the releases section, extract the files, and run the main script.
+**2. ZIP File:** Download the ZIP file from the releases section, extract the files, and run the main script.
 
 ## Usage
-1. Start Tracking: After installation, run the application. You just need to press the start tracking button.
+**1. Start Tracking:** After installation, run the application. You just need to press the start tracking button.
    
-2. Idle: Idle clock will be turned on by default when the app is the tracker itself and when checking windows   
+**2. Idle:** Idle clock will be turned on by default when the app is the tracker itself and when checking windows   
    services
    
-3. Context Menu: With right-click you can acess the context menu and its feature:
+**3. Context Menu:** With right-click you can acess the context menu and its feature:
    - Always on top: Makes sure the app is visible on top of other applications, except in full-screen applications
    - Open Logs: The main way to check the logged data from the tracker.
    - System Tray: Makes the app run on the background. With right-click on tray icon you re-open the app.
