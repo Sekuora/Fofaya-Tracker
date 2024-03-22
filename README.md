@@ -1,5 +1,5 @@
 # Fofaya Tracker
-This is my first application project in Python. I've been using Python for around 4-5 months now.
+This is my first application project in Python. I've been using Python for around 5-6 months now.
 This app is a Time Tracker that monitors the time spent on different applications on a Windows machine. This project was developed with the assistance of GitHub Copilot, an AI-powered code completion tool.
 
 ## Project Description
