@@ -8,3 +8,4 @@ from .main_window_ui import MainWindow
 from .time_tracker import TimeTracker
 from .tracker_globals import process_time, recent_apps
 from .logs_window_ui import ChartWindow
+from .settings_data import SettingsData

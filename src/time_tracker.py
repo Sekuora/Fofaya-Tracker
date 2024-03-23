@@ -7,29 +7,23 @@ from PySide6.QtCore import QThread, Signal
 import psutil
 import win32process
 import win32gui
-from win32gui import GetForegroundWindow
 import time
 from .tracker_globals import process_time
 from datetime import datetime
-import pygetwindow as gw
-from PySide6.QtCore import Signal
 from .time_track_data import TimeTrackData  # Import TimeTrackData at the top of the file
-import win32service
+import win32api
 
 
 class TimeTracker(QThread):
     update_label = Signal(str, str)
     data_updated = Signal()  # New signal
-
     def __init__(self):
         super().__init__()
   
         self.is_running = False
         self.current_app = None
         self.time_track_data = TimeTrackData()  # Create an instance of TimeTrackData
-        self.excluded_apps = {app: False for app in self.time_track_data.load_excluded_apps()}
-      
-        
+        self.excluded_apps = ["Fofaya"]
 
     # In TimeTracker class
     def run(self):
@@ -68,6 +62,19 @@ class TimeTracker(QThread):
             execution_time = end_time - start_time
             sleep_time = max(1.0 - execution_time, 0)
             time.sleep(sleep_time)
+    
+    def get_window_title(self, pid):
+        def callback(hwnd, hwnds):
+            if win32gui.IsWindowVisible(hwnd) and win32process.GetWindowThreadProcessId(hwnd)[1] == pid:
+                hwnds.append(hwnd)
+            return True
+
+        hwnds = []
+        win32gui.EnumWindows(callback, hwnds)
+        return win32gui.GetWindowText(hwnds[0]) if hwnds else None
+    
+    def is_helpful(self, name):
+        return name and len(name) <= 50
 
     def get_current_app(self):
         try:
@@ -79,55 +86,73 @@ class TimeTracker(QThread):
 
             # Check if the pid is a positive integer
             if pid > 0:
-                # Get the process name using psutil
+                # Get the process using psutil
                 process = psutil.Process(pid)
-                process_name = process.name().replace(".exe", "")
-
+                
+                # Get the executable path
+                exe_path = process.exe()
+                
                 # Check if the process is a system process or located in the 'Windows' directory
-                if process.username() in ['SYSTEM', 'LOCAL SERVICE', 'NETWORK SERVICE'] or '\\Windows\\' in process.exe():
+                if process.username() in ['SYSTEM', 'LOCAL SERVICE', 'NETWORK SERVICE'] or '\\Windows\\' in exe_path:
                     return "Idle"
+
+                # Get product name and file description from the executable metadata
+                product_name = self.get_product_name(exe_path)
+                file_description = self.get_file_description(exe_path)
+                
+                # Get the exe name and format it nicely
+                exe_name = process.name().replace(".exe", "").replace("_", " ").title()
+
+                # Create a dictionary to map specific exe names to their desired display names
+                exe_name_mapping = {
+                    "Epicgameslauncher": "Epic Games Launcher"
+                    # Add more mappings here if needed
+                }
+
+                # If exe name is in the mapping, use the mapped name
+                if exe_name in exe_name_mapping:
+                    app_name = exe_name_mapping[exe_name]
+                elif product_name and self.is_helpful(product_name):
+                    app_name = product_name
+                elif file_description and self.is_helpful(file_description):
+                    app_name = file_description
                 else:
-                    # If the process name is already in the excluded_apps dictionary, return its value
-                    if process_name in self.excluded_apps:
-                        return self.excluded_apps[process_name]
+                    app_name = exe_name
+                
+                # Check if the app is in the exclusions list
+                if app_name in self.excluded_apps:
+                    return "Idle"
 
-                    # Get the text of the window's title bar
-                    window_title = win32gui.GetWindowText(hwnd)
-
-                    # If the window title is empty, use the process name
-                    if not window_title:
-                        window_title = process_name
-
-                    # If the window title is not empty, format it
-                    if window_title:
-                        # Split the title by the dash and take the last part
-                        app_name_split1 = window_title.split(" - ")[-1]
-                        app_name_split2 = app_name_split1.split(": ")[-1].replace('\u200B', '')
-                        # Check if the application name is too long or if it's in the excluded_apps list and its value is True
-                        if len(app_name_split2) > 50 or (app_name_split2 in self.excluded_apps and self.excluded_apps[app_name_split2]) or app_name_split2 == "Fofaya":
-                            return "Idle"
-                        else:
-                            # Add the app to the excluded_apps dictionary if it's not already there
-                            if app_name_split2 not in self.excluded_apps:
-                                self.excluded_apps[app_name_split2] = False
-                            
-                            window_title = app_name_split2
-
-                    # Add the window title to the excluded_apps dictionary
-                    self.excluded_apps[process_name] = window_title
-
-                    # Return the app name
-                    return window_title
+                  # Check if the app is in the excluded_apps dictionary
+                # Check if the app is in the excluded_apps dictionary and if it's set to True
+                # Return the app name
+                return app_name
             # If no window was found for the process, return "Idle"
             return "Idle"
         except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
             return "Idle"
+    
+    def get_file_description(self, exe_path):
+        try:
+            # Get file description from executable metadata
+            file_description = win32api.GetFileVersionInfo(exe_path, '\\StringFileInfo\\040904b0\\FileDescription')
+            return file_description
+        except Exception as e:
+            print(f"Error retrieving file description: {e}")
+            return None
+
+    def get_product_name(self, exe_path):
+        try:
+            # Get product name from executable metadata
+            product_name = win32api.GetFileVersionInfo(exe_path, '\\StringFileInfo\\040904b0\\ProductName')
+            return product_name
+        except Exception as e:
+            print(f"Error retrieving product name: {e}")
+            return None
+
     def format_time(self, seconds):
         return time.strftime('%H:%M:%S', time.gmtime(seconds))
-
-  
-        
-        
+    
     def format_time(self, seconds):
         return time.strftime('%H:%M:%S', time.gmtime(seconds))
 

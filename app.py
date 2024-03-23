@@ -11,11 +11,11 @@
 # 4. PyInstaller is included in the requirements and it is what I used to compile the program.
 # 5. Compile the program with `pyinstaller app.spec`.
 # 6. The compiled program will be in the `dist` directory.
-
 import os
 from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import QApplication
-from src import TimeTrackData, MainWindow, TimeTracker, process_time, recent_apps
+from src import TimeTrackData, MainWindow, TimeTracker, SettingsData, process_time, recent_apps
+
 
 def get_icon_path():
     # Get the path to the directory that contains the current file
@@ -30,7 +30,9 @@ def get_icon_path():
     return icon_path
 
 # Load tracker app data
-data = TimeTrackData()
+data = TimeTrackData() 
+settings_data = SettingsData()
+settings_data.load_settings()
 data.load_times()  # Update the global process_time variable directly
 
 # Create TimeTracker instance
@@ -43,11 +45,19 @@ app = QApplication([])
 app.setWindowIcon(QIcon(get_icon_path()))
 
 # Create the main window
-window = MainWindow(tracker)
+window = MainWindow(tracker, settings_data)
 
-window.show()
+if window.startup_minimized_tray:
+    window.hide()
+    window.trayIcon.show()
+else:
+    window.show()
+    window.trayIcon.show()
 
 app.exec()
 
 # Save the updated process_time
 data.save_times()
+
+# Save the updated settings
+settings_data.save_settings()

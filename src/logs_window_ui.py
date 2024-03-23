@@ -4,36 +4,50 @@
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <https://www.gnu.org/licenses/>.
 import json
-import sys
 from collections import defaultdict
+import math
 
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
+import matplotlib.font_manager as fm
 
-from PySide6.QtCore import Qt, QTimer, QDate, QSize
+
+from PySide6.QtCore import Qt, QTimer
 from PySide6.QtGui import QColor, QTextCharFormat, QAction, QIcon
-from PySide6.QtWidgets import (QApplication, QHBoxLayout, QMainWindow, 
+from PySide6.QtWidgets import (QHBoxLayout, 
                                QPushButton, QVBoxLayout, QWidget, 
                                QCalendarWidget, QToolButton, QMenu, 
                                QWidgetAction)
 
 from .main_window_ui import MainWindow
-
+import os
 
 class ChartWindow(MainWindow):
-    def __init__(self, time_tracker):
-        super().__init__(tracker=time_tracker)
-        self.get_icons_path()
+    def __init__(self, time_tracker, settings_data=None):
+        super().__init__(tracker=time_tracker, settings_data=settings_data)
+        # Get the directory of the current script
+        script_dir = os.path.dirname(os.path.realpath(__file__))
 
+        # Build the paths to the font files
+        self.poppins_font_path = os.path.join(script_dir, '..', 'assets', 'fonts', 'Poppins-Medium.ttf')
+        self.azeret_mono_font_path = os.path.join(script_dir, '..', 'assets', 'fonts', 'AzeretMono-Regular.ttf')
+
+        # Load 'Poppins' font
+        self.poppins_font = fm.FontProperties(fname=self.poppins_font_path)
+
+        # Load 'Azeret Mono' font
+        self.azeret_mono_font = fm.FontProperties(fname=self.azeret_mono_font_path)
+        # Initialize current_page
+        self.current_page = 0
+
+        self.get_icons_path()
 
         self.view_mode = 'date'
       
         self.set_initial_values()
         top_bar_widget = self.top_bar()
-      
-       
 
         self.tracker = time_tracker
         self.calendar_style = """
@@ -154,11 +168,8 @@ class ChartWindow(MainWindow):
         # Set the menu for the button
         self.filter_button.setMenu(self.filter_menu)
 
-
-
         # Create a new QAction
         most_used_all_time_action = QAction('Most Used Apps All Time', self)
-
         
         # Add the action to the filter_menu
         self.filter_menu.addAction(most_used_all_time_action)
@@ -166,9 +177,6 @@ class ChartWindow(MainWindow):
        
         # Connect the action to the filter_charts function
         most_used_all_time_action.triggered.connect(lambda: self.all_time_mode('Most Used Apps All Time'))
-
-
-
 
         # Create a calendar widget
         self.calendar = QCalendarWidget()
@@ -257,7 +265,7 @@ class ChartWindow(MainWindow):
 
         # Initialize start and end
         self.start = 0
-        self.end = 4
+        self.end = 3
 
         # Create buttons
         self.next_button = QPushButton("Next")
@@ -308,33 +316,48 @@ class ChartWindow(MainWindow):
 
     
     def timer_states(self, tracker):
-        if self.view_mode == 'date':
-            self.timer.timeout.connect(self.date_charts)
-            self.timer.start(10000)  # Update every 10 second
-            tracker.data_updated.connect(self.date_charts)
-            print(self.view_mode)
-        elif self.view_mode == 'all_time':
-            self.timer.timeout.connect(self.filter_charts)
-            self.timer.start(10000)  # Update every 10 seconds
-            tracker.data_updated.connect(self.filter_charts)
-            print(self.view_mode)
+        # Disconnect the timer's timeout signal from all slots
+        try:
+            self.timer.timeout.disconnect()
+        except RuntimeError:
+            # Ignore the error if the signal was not connected to any slots
+            pass
+
+        # Only start the timer if on the first page
+        if self.start == 0:
+            if self.view_mode == 'date':
+                self.timer.timeout.connect(self.date_charts)
+                self.timer.start(10000)  # Update every 10 second
+                tracker.data_updated.connect(self.date_charts)
+                print(self.view_mode)
+            elif self.view_mode == 'all_time':
+                self.timer.timeout.connect(self.filter_charts)
+                self.timer.start(10000)  # Update every 10 seconds
+                tracker.data_updated.connect(self.filter_charts)
+                print(self.view_mode)
 
 
     def all_time_mode(self, view_mode):
         self.view_mode = 'all_time'  # Set the view mode to 'all_time'
-        
-        self.timer.start(1000)  # Set timer interval to 1 second
-        self.filter_charts()  # Update the chart immediately
-        self.timer.start(10000)  # Set timer interval back to 10 seconds
-        self.timer_states(tracker =  self.tracker)
+
+        self.filter_charts()
+
+        if self.start == 0:
+            self.timer.start(1000)  # Set timer interval to 1 second
+            self.filter_charts()  # Update the chart immediately
+            self.timer.start(10000)  # Set timer interval back to 10 seconds
+            self.timer_states(tracker =  self.tracker)
 
         
     def on_date_selected(self):
         self.view_mode = 'date'  # Add this line
-        self.timer.start(1000)  # Set timer interval to 1 second
-        self.date_charts()  # Update the chart immediately
-        self.timer.start(10000)  # Set timer interval back to 10 seconds
-        self.timer_states(tracker =  self.tracker)
+
+        self.date_charts()
+        if self.start == 0:
+            self.timer.start(1000)  # Set timer interval to 1 second
+            self.date_charts()  # Update the chart immediately
+            self.timer.start(10000)  # Set timer interval back to 10 seconds
+            self.timer_states(tracker =  self.tracker)
 
  
         
@@ -343,30 +366,43 @@ class ChartWindow(MainWindow):
             self.calendar_menu.setVisible(not self.calendar_menu.isVisible())
             
     def next(self):
-        self.start += 4
-        self.end += 4
+        # Stop the timer
+        self.timer.stop()
+
+        self.current_page += 1
+
+       
         if self.view_mode == 'date':
             self.date_charts(self.start, self.end)
         elif self.view_mode == 'all_time':
             self.filter_charts(self.start, self.end)
 
     def prev(self):
-        self.start = max(0, self.start - 4)  # Ensure start is not negative
-        self.end = max(4, self.end - 4)  # Ensure end is at least 5
+        self.current_page = max(0, self.current_page - 1)  # Ensure current_page is not negative
+
+    # Restart the timer if on the first page
+        if self.current_page == 0:
+            self.timer.start()
+
         if self.view_mode == 'date':
-            self.date_charts(self.start, self.end)
+            self.date_charts()
         elif self.view_mode == 'all_time':
-            self.filter_charts(self.start, self.end)
+            self.filter_charts()
 
     def get_selected_date(self):
         # Assuming you have a QCalendarWidget named calendar
         selected_date = self.calendar.selectedDate()
         return selected_date.toString('dd/MM/yyyy')
 
-    def date_charts(self, start=0, end=4):
+    def date_charts(self, start=0, end=3):
         if self.view_mode != 'date':  # Add this line
             return  # Add this line
         
+            # If start and end are None, use the current page
+   
+        start = self.current_page * 3
+        end = start + 3
+    
         plt.style.use('dark_background')
         # Load the data
         with open('app_times.json') as f:
@@ -386,8 +422,9 @@ class ChartWindow(MainWindow):
         apps = []
         times = []
         for app, total_time in sorted(total_times.items(), key=lambda item: item[1], reverse=True):
-            apps.append(app)
-            times.append(total_time / 3600)  # Convert seconds to hours
+            if app != "Idle":
+                apps.append(app)
+                times.append(total_time / 3600)  # Convert seconds to hours
 
         # Clear the figure
         self.fig.clear()
@@ -397,11 +434,16 @@ class ChartWindow(MainWindow):
             # Create a bar chart
             ax = self.fig.add_subplot(111)
             ax.set_facecolor((30/255, 30/255, 30/255))
+            # Change the color and width of the spines
+            for spine in ax.spines.values():
+                spine.set_color((160/255, 160/255, 160/255, 1))  # Change the color to match the ticks
+                spine.set_linewidth(0.5)  # Change the width as needed
+
             ax.tick_params(axis='x', colors=(160/255, 160/255, 160/255, 1))
             ax.tick_params(axis='y', colors=(160/255, 160/255, 160/255, 1))
             bars = ax.bar(apps[start:end], times[start:end])
             ax.set_ylabel('Usage Time (hours)', color=(160/255, 160/255, 160/255, 1))
-            title_font = {'fontname': 'Poppins', 'fontsize': 10, 'fontweight': 'medium', 'color': (160/255, 160/255, 160/255, 1)}
+            title_font = {'fontproperties': self.poppins_font, 'fontsize': 10, 'fontweight': 'medium', 'color': (160/255, 160/255, 160/255, 1)}
             ax.set_title('App Usage\n' + title_date, loc='center', color=(160/255, 160/255, 160/255, 1), fontdict=title_font)  # Set the selected date as the subtitle
             ax.set_ylim([0, 16])  # Set y-axis limits from 0 to 16 hours
 
@@ -411,7 +453,7 @@ class ChartWindow(MainWindow):
                 hours = int(height)
                 minutes = int((height - hours) * 60)
                 seconds = int((height - hours - minutes / 60) * 3600)
-                label_font = {'fontname': 'Azeret Mono', 'fontsize': 11, 'fontweight': 'bold', 'color': (170/255, 170/255, 170/255, 1)}
+                label_font = {'fontproperties': self.azeret_mono_font, 'fontsize': 11, 'fontweight': 'bold', 'color': (170/255, 170/255, 170/255, 1)}
                 ax.text(bar.get_x() + bar.get_width() / 2, height,
                         f'{hours:02d}:{minutes:02d}:{seconds:02d}', ha='center', va='bottom', color=(160/255, 160/255, 160/255, 1), 
                         fontdict=label_font)
@@ -425,10 +467,15 @@ class ChartWindow(MainWindow):
         # Redraw the canvas
         self.canvas.draw()
     
-    def filter_charts(self, start=0, end=4):
+    def filter_charts(self, start=0, end=3):
         if self.view_mode != 'all_time':  # Add this line
             return  # Add this line
-            
+        
+        # If start and end are None, use the current page
+       
+        start = self.current_page * 3
+        end = start + 3
+
         plt.style.use('dark_background')
 
         # Load the data
@@ -445,8 +492,9 @@ class ChartWindow(MainWindow):
         apps = []
         times = []
         for app, total_time in sorted(total_times.items(), key=lambda item: item[1], reverse=True):  # Remove slicing here
-            apps.append(app)
-            times.append(total_time / 3600)  # Convert seconds to hours
+            if app != "Idle":  # Skip the "Idle" entries
+                apps.append(app)
+                times.append(total_time / 3600)  # Convert seconds to hours
 
         # Clear the figure
         self.fig.clear()
@@ -456,13 +504,22 @@ class ChartWindow(MainWindow):
             # Create a bar chart
             ax = self.fig.add_subplot(111)
             ax.set_facecolor((30/255, 30/255, 30/255))
+
+            # Change the color and width of the spines
+            for spine in ax.spines.values():
+                spine.set_color((160/255, 160/255, 160/255, 1))  # Change the color to match the ticks
+                spine.set_linewidth(0.5)  # Change the width as needed
+
             ax.tick_params(axis='x', colors=(160/255, 160/255, 160/255, 1))
             ax.tick_params(axis='y', colors=(160/255, 160/255, 160/255, 1))
             bars = ax.bar(apps[start:end], times[start:end])
             ax.set_ylabel('Usage Time (hours)', color=(160/255, 160/255, 160/255, 1))
-            title_font = {'fontname': 'Poppins', 'fontsize': 10, 'fontweight': 'medium', 'color': (160/255, 160/255, 160/255, 1)}
+            title_font = {'fontproperties': self.poppins_font, 'fontsize': 10, 'fontweight': 'medium', 'color': (160/255, 160/255, 160/255, 1)}
             ax.set_title('App Usage\n' + 'All Time', loc='center', color=(160/255, 160/255, 160/255, 1), fontdict=title_font)  # Set the selected date as the subtitle
-            ax.set_ylim([0, 16])  # Set y-axis limits from 0 to 16 hours
+            
+            # Set y-axis limits from 0 to maximum time or 16 hours, whichever is greater
+            max_time = max(times)
+            ax.set_ylim([0, math.ceil(max_time)])
 
             for bar in bars:
                 bar.set_color((0/255, 100/255, 212/255, 1))  # Set the color of the bars to blue
@@ -470,7 +527,7 @@ class ChartWindow(MainWindow):
                 hours = int(height)
                 minutes = int((height - hours) * 60)
                 seconds = int((height - hours - minutes / 60) * 3600)
-                label_font = {'fontname': 'Azeret Mono', 'fontsize': 11, 'fontweight': 'bold', 'color': (170/255, 170/255, 170/255, 1)}
+                label_font = {'fontproperties': self.azeret_mono_font, 'fontsize': 11, 'fontweight': 'bold', 'color': (170/255, 170/255, 170/255, 1)}
                 ax.text(bar.get_x() + bar.get_width() / 2, height,
                         f'{hours:02d}:{minutes:02d}:{seconds:02d}', ha='center', va='bottom', color=(160/255, 160/255, 160/255, 1), 
                         fontdict=label_font)
@@ -503,8 +560,8 @@ class ChartWindow(MainWindow):
         self.installEventFilter(self)
         self.normalGeometry = self.geometry()
         self.setWindowTitle("Fofaya")
-        self.resize(720, 480)
-        self.setMinimumSize(700, 460)
+        self.resize(600, 400)
+        self.setMinimumSize(600, 400)
         self.setMaximumSize(1920, 1080)
         # Set the background color to a semi-transparent white
         self.setStyleSheet("""
@@ -526,9 +583,39 @@ class ChartWindow(MainWindow):
 
         pass
 
+
     def contextMenuEvent(self, event):
+        contextMenu = QMenu(self)
+        contextMenu.setTitle("Fofaya")
 
-        pass
+        # Set the stylesheet for the context menu
+        contextMenu.setStyleSheet("""
+            QMenu {
+                background-color: rgba(30, 30, 30, 0.9); /* lighter gray */
+                color: rgba(140, 140, 140, 1); /* gray text */
+                border: 0px solid rgba(70, 70, 70, 0.8);
+                border-radius: 5px;
+            }
+            QMenu::item:selected {
+                background-color: rgba(30, 30, 30, 0.9); /* lighter gray */
+                color: rgba(230, 230, 230, 1); /* white text on selection */
+            }
+            QMenu::item:hover {
+                background-color: rgba(30, 30, 30, 0.9); /* lighter gray */
+                color: rgba(240, 240, 240, 1); /* white text on hover */
+            }              
+            QMenu::separator {
+                height: 4px; /* make it more visible */
+                background: rgba(35, 35, 35, 0.9); /* dark gray */
+                margin: 6px 0; /* add some vertical spacing */
+                border-radius: 2px; /* rounded corners */
+            }
+        """)
 
-    def toggleAlwaysOnTop(self, checked):
-        pass
+        alwaysOnTopAction = QAction("Always On Top", self, checkable=True)
+        alwaysOnTopAction.setChecked(self.windowFlags() & Qt.WindowStaysOnTopHint)
+        alwaysOnTopAction.triggered.connect(self.toggleAlwaysOnTop)
+        alwaysOnTopAction.setToolTip("Keep on top of other windows")
+        contextMenu.addAction(alwaysOnTopAction)
+
+        contextMenu.exec_(self.mapToGlobal(event.pos()))
