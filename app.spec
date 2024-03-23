@@ -1,5 +1,3 @@
-# -*- mode: python ; coding: utf-8 -*-
-
 a = Analysis(
     ['app.py'],
     pathex=[],
@@ -9,6 +7,11 @@ a = Analysis(
         ('assets/maximize.png', 'assets'),
         ('assets/minimize.png', 'assets'),
         ('assets/fofaya_icon.ico', 'assets'),
+        ('assets/fonts/AzeretMono-Medium.ttf', 'assets/fonts'),
+        ('assets/fonts/AzeretMono-Regular.ttf', 'assets/fonts'),
+        ('assets/fonts/Poppins-Regular.ttf', 'assets/fonts'),
+        ('assets/fonts/Poppins-SemiBold.ttf', 'assets/fonts'),
+        ('assets/fonts/Poppins-Medium.ttf', 'assets/fonts'), 
     ],
     hiddenimports=[],
     hookspath=[],
