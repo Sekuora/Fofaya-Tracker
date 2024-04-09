@@ -1,0 +1,3 @@
+# Ignore documents created by the tracker
+app_times.json
+settings.json
