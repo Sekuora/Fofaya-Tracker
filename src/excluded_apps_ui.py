@@ -204,9 +204,9 @@ class ExcludedAppsWindow(MainWindow):
         self.installEventFilter(self)
         self.normalGeometry = self.geometry()
         self.setWindowTitle("Fofaya Tracker")
-        self.resize(240, 260)
-        self.setMinimumSize(240, 260)
-        self.setMaximumSize(300, 1080)
+        self.resize(460, 460)
+        self.setMinimumSize(460, 460)
+        self.setMaximumSize(460, 1080)
         # Set the background color to a semi-transparent white
         self.setStyleSheet("""
                             background-color: rgba(30, 30, 30, 0.99); 

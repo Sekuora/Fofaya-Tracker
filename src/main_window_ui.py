@@ -84,15 +84,11 @@ class MainWindow(QMainWindow):
         else:
             print('Failed to load font.')
 
-
         # Loads the initial settings
         self.settings_data = settings_data
         self.added_to_startup = self.settings_data.settings.get('added_to_startup', False)
         self.minimized_to_tray = self.settings_data.settings.get('minimized_to_tray', False)
         self.startup_minimized_tray = self.settings_data.settings.get('startup_minimized_tray', False)
-
-        # Get the paths to the icon files
-        self.get_icons_path()
 
         # Get the paths to the icon files
         self.get_icons_path()
@@ -129,9 +125,8 @@ class MainWindow(QMainWindow):
                     background-color: rgba(45, 45, 45, 0.7);
                     color: rgba(230, 230, 230, 0.9);
                 }
-                
         """
-   
+
         # Create a context menu
         tray_contextMenu = QMenu()
         tray_contextMenu.setTitle("Fofaya")
@@ -145,15 +140,15 @@ class MainWindow(QMainWindow):
 
         # Create a restore action
         restoreAction = QAction("Open Fofaya", self)
-        restoreAction.triggered.connect(self.show)  # Show the main window when this action is triggered
+
+        restoreAction.triggered.connect(self.on_open_fofaya)  # Show the main window when this action is triggered
+
         tray_contextMenu.addAction(restoreAction)
 
         # Create a quit action
         quitAction = QAction("Exit", self)
         quitAction.triggered.connect(QApplication.instance().quit)  # Close the application when this action is triggered
         tray_contextMenu.addAction(quitAction)
-
-      
 
         # Create the system tray icon
         self.trayIcon = QSystemTrayIcon(self)
@@ -162,26 +157,20 @@ class MainWindow(QMainWindow):
         # Connect the activated signal to a method that handles the double-click event
         self.trayIcon.activated.connect(self.on_tray_icon_activated)
     
-
         # Set the context menu for the tray icon
         self.trayIcon.setContextMenu(tray_contextMenu)
-
         self.trayIcon.setIcon(QIcon(self.tray_icon_path))
-   
 
         self.set_initial_values()
         self.setWindowIcon(QIcon(self.window_icon_path))
         
-
         # Create the animation
         self.animation = QPropertyAnimation(self, b"geometry")
-        self.animation.setDuration(75)  # The animation lasts 500 ms
+        self.animation.setDuration(75)
 
         # Set the easing curve
         self.animation.setEasingCurve(QEasingCurve.OutCubic)
 
-
-        
         # Set the background color
         palette = QPalette()
         palette.setColor(QPalette.Window, QColor(50, 130, 180))
@@ -193,7 +182,6 @@ class MainWindow(QMainWindow):
         self.timer_label = QLabel()
 
         self.start_button = QToolButton()
-    
 
         self.widgets_initial_values()
 
@@ -209,14 +197,12 @@ class MainWindow(QMainWindow):
         self.m_mouse_down = False
         self.m_old_pos = None
 
-
         layout = QVBoxLayout()
         layout.setContentsMargins(2, 0, 2, 10)  # Remove the margins
   
         # Add the top bar layout to the main layout
         layout.addWidget(top_bar_widget)
 
-    
         # Add widgets with stretch factors
         layout.addWidget(self.app_name_label, 1)
    
@@ -233,11 +219,8 @@ class MainWindow(QMainWindow):
         self.time_tracker = tracker
         self.time_tracker.update_label.connect(self.update_labels)
 
-
-        
         # Call Idle state
         self.idle_clock_startup()
-
         self.updateUI()
 
     def top_bar(self):
@@ -261,7 +244,6 @@ class MainWindow(QMainWindow):
 
         # Create QToolButtons for the close, maximize, and minimize actions
         close_button = QToolButton()
-
  
         close_button.clicked.connect(self.close_window)
         close_button.setFixedHeight(25)  # Set the height to 30 pixels
@@ -280,10 +262,8 @@ class MainWindow(QMainWindow):
                 background-color: rgba(255, 100, 100, 0.5);
             }
             """)
-        
 
         maximize_button = QToolButton()
-  
         maximize_button.clicked.connect(self.toggleMaximize)
         maximize_button.setFixedHeight(25)  # Set the height to 30 pixels
         maximize_button.setFixedWidth(35)  # Set the width to 30 pixels
@@ -302,7 +282,6 @@ class MainWindow(QMainWindow):
             """)
 
         minimize_button = QToolButton()
-       
         minimize_button.clicked.connect(self.minimize)
         minimize_button.setFixedHeight(25)  # Set the height to 30 pixels
         minimize_button.setFixedWidth(35)  # Set the width to 30 pixels
@@ -320,7 +299,6 @@ class MainWindow(QMainWindow):
             }
             """)
         
-
         # Add the buttons to the top bar layout
         top_bar_layout.addWidget(minimize_button)
         top_bar_layout.addWidget(maximize_button)
@@ -347,7 +325,6 @@ class MainWindow(QMainWindow):
         self.minimize_icon_path = os.path.join(parent_path, 'assets/minimize.png')
         self.window_icon_path = os.path.join(parent_path, 'assets/fofaya_icon.ico')
         self.tray_icon_path = os.path.join(parent_path, 'assets/fofaya_icon.ico')
-
 
     def create_shortcut(self, path, target='', wDir='', icon=''):
         shell = win32com.client.Dispatch("WScript.Shell")
@@ -644,6 +621,7 @@ class MainWindow(QMainWindow):
             max_width, max_height = self.maximumSize().width(), self.maximumSize().height()
             # Reset the resize action and direction
 
+
             # Check if the mouse is within the resize area
             if ((width > min_width and height > min_height) or 
                 (width < max_width and height < max_height)):
@@ -893,14 +871,14 @@ class MainWindow(QMainWindow):
         contextMenu.addSeparator()
 
         # Create the logs Window action
-        logsAction = QAction("View Usage Data", self)
+        logsAction = QAction("View App Times", self)
         logsAction.triggered.connect(self.showLogs)  # Connect to the method that shows the logs
-        logsAction.setToolTip("Opens usage data window")
+        logsAction.setToolTip("Opens App data window")
         contextMenu.addAction(logsAction)
       
         # Create the logs Window action
-        logsManagerAction = QAction("Manage Usage Data", self)
-        logsManagerAction.setToolTip("Opens usage data manager window")
+        logsManagerAction = QAction("View Logs Manager", self)
+        logsManagerAction.setToolTip("Opens app manager window")
         logsManagerAction.triggered.connect(self.showLogsManger)  # Connect to the method that shows the logs
         contextMenu.addAction(logsManagerAction)
 
@@ -928,7 +906,7 @@ class MainWindow(QMainWindow):
         startupAction = QAction("Start With System", self, checkable=True)
         startupAction.setChecked(self.added_to_startup)
         startupAction.triggered.connect(self.toggleAddToStartup)
-        startupAction.setToolTip("Start with system")
+        startupAction.setToolTip("Starts Fofaya on system startup")
         contextMenu.addAction(startupAction)
 
         
@@ -1066,11 +1044,15 @@ class MainWindow(QMainWindow):
         
         else:
             self.showMinimized()
+    
+    def on_open_fofaya(self):
+        self.show()
+        self.raise_()
+        self.activateWindow()
+    
 
     def on_tray_icon_activated(self, reason):
         if reason == QSystemTrayIcon.DoubleClick:
             self.show()
             self.raise_()
             self.activateWindow()
-
-
