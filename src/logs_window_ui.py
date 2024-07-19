@@ -285,7 +285,7 @@ class ChartWindow(MainWindow):
         self.layout.addLayout(self.button_layout)
 
         # Set the font size and family
-        mpl.rcParams['font.size'] = 10
+        mpl.rcParams['font.size'] = 8.5
         mpl.rcParams['font.family'] = 'Poppins'
         mpl.rcParams['font.weight'] = 'semibold'
 
