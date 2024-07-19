@@ -7,17 +7,15 @@
 # Compile Instructions:
 # 1. Ensure Python 3.x is installed on your system.
 # 2. Optionally, create a virtual environment.
-# 3. Install the required libraries by running pip install -r requirements.txt
+# 3. Install the required libraries by running `pip install -r requirements.txt`
 # 4. PyInstaller is included in the requirements and it is what I used to compile the program.
-# 5. Compile the program with pyinstaller app.spec.
-# 6. The compiled program will be in the dist directory.
-
+# 5. Compile the program with `pyinstaller app.spec`.
+# 6. The compiled program will be in the `dist` directory.
 import os
 import sys
+import tempfile
 from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import QApplication
-from PySide6.QtCore import QSharedMemory, QSystemSemaphore, QByteArray, QDataStream, QIODevice
-from PySide6.QtNetwork import QLocalServer, QLocalSocket
 from src import TimeTrackData, MainWindow, TimeTracker, SettingsData
 
 def get_icon_path():
@@ -26,30 +24,34 @@ def get_icon_path():
     icon_path = os.path.join(parent_path, 'assets/fofaya_icon.ico')
     return icon_path
 
-def send_message_to_existing_instance():
-    socket = QLocalSocket()
-    socket.connectToServer("FofayaTrackerServer")
-    if socket.waitForConnected(1000):
-        socket.write(b"SHOW")
-        socket.flush()
-        socket.waitForBytesWritten(1000)
-        socket.close()
+# Global variable to store the single instance of MainWindow
+window = None
+
+# Function to check if the application is already running
+def is_already_running():
+    lock_file = os.path.join(tempfile.gettempdir(), 'fofaya_app.lock')
+    if os.path.exists(lock_file):
+        return True
+    with open(lock_file, 'w') as f:
+        f.write(str(os.getpid()))
+    return False
+
+# Function to release the lock file when done
+def release_lock():
+    lock_file = os.path.join(tempfile.gettempdir(), 'fofaya_app.lock')
+    if os.path.exists(lock_file):
+        os.remove(lock_file)
 
 def main():
-    # Ensure a single instance using QSharedMemory
-    shared_memory = QSharedMemory("FofayaTrackerSharedMemory")
-    if not shared_memory.create(1):
-        send_message_to_existing_instance()
-        sys.exit(0)
+    global window
 
-    # Create the application
-    app = QApplication([])
-
-    # Set the application icon
-    app.setWindowIcon(QIcon(get_icon_path()))
+    # Check if an instance of the application is already running
+    if is_already_running():
+        print("Another instance is already running.")
+        sys.exit()  # Exit if another instance is running
 
     # Load tracker app data
-    data = TimeTrackData() 
+    data = TimeTrackData()
     settings_data = SettingsData()
     settings_data.load_settings()
     data.load_times()
@@ -57,35 +59,25 @@ def main():
     # Create TimeTracker instance
     tracker = TimeTracker()
 
-    # Create the main window
+    # Create the application
+    app = QApplication([])
+
+    # Set the application icon
+    app.setWindowIcon(QIcon(get_icon_path()))
+
+    # Create a new MainWindow instance
     window = MainWindow(tracker, settings_data)
-
-    # IPC server to handle messages from other instances
-    server = QLocalServer()
-    def handle_new_connection():
-        socket = server.nextPendingConnection()
-        if socket.waitForReadyRead(1000):
-            message = socket.readAll().data().decode()
-            if message == "SHOW":
-                if window.isMinimized() or not window.isVisible():
-                    window.show()
-                    window.raise_()
-                    window.activateWindow()
-                    window.trayIcon.hide()
-
-    server.newConnection.connect(handle_new_connection)
-    if not server.listen("FofayaTrackerServer"):
-        if server.serverError() == QLocalServer.AddressInUseError:
-            QLocalServer.removeServer("FofayaTrackerServer")
-            server.listen("FofayaTrackerServer")
 
     if window.startup_minimized_tray:
         window.hide()
         window.trayIcon.show()
-        window.startTrackingAction()
+        window.start_tracking()
     else:
         window.show()
         window.trayIcon.show()
+
+    # Connect the application exit signal to release the lock file
+    app.aboutToQuit.connect(release_lock)
 
     app.exec()
 

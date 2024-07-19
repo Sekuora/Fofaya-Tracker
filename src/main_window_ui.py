@@ -16,6 +16,7 @@ class MainWindow(QMainWindow):
     def __init__(self, tracker, settings_data):
 
         super().__init__()
+
                 # Get the directory of the current script
         script_dir = os.path.dirname(os.path.realpath(__file__))
 
@@ -222,6 +223,7 @@ class MainWindow(QMainWindow):
         # Call Idle state
         self.idle_clock_startup()
         self.updateUI()
+
 
     def top_bar(self):
         # Top Bar
