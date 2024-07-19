@@ -12,80 +12,52 @@
 # 5. Compile the program with `pyinstaller app.spec`.
 # 6. The compiled program will be in the `dist` directory.
 import os
-import sys
-import tempfile
 from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import QApplication
-from src import TimeTrackData, MainWindow, TimeTracker, SettingsData
+from src import TimeTrackData, MainWindow, TimeTracker, SettingsData, process_time, recent_apps
+
 
 def get_icon_path():
+    # Get the path to the directory that contains the current file
     base_path = os.path.dirname(__file__)
+
+    # Get the path to the parent directory
     parent_path = os.path.dirname(base_path)
+
+    # Get the path to the icon file
     icon_path = os.path.join(parent_path, 'assets/fofaya_icon.ico')
+
     return icon_path
 
-# Global variable to store the single instance of MainWindow
-window = None
+# Load tracker app data
+data = TimeTrackData() 
+settings_data = SettingsData()
+settings_data.load_settings()
+data.load_times()  # Update the global process_time variable directly
 
-# Function to check if the application is already running
-def is_already_running():
-    lock_file = os.path.join(tempfile.gettempdir(), 'fofaya_app.lock')
-    if os.path.exists(lock_file):
-        return True
-    with open(lock_file, 'w') as f:
-        f.write(str(os.getpid()))
-    return False
+# Create TimeTracker instance
+tracker = TimeTracker()
 
-# Function to release the lock file when done
-def release_lock():
-    lock_file = os.path.join(tempfile.gettempdir(), 'fofaya_app.lock')
-    if os.path.exists(lock_file):
-        os.remove(lock_file)
+# Create the application
+app = QApplication([])
 
-def main():
-    global window
+# Set the application icon
+app.setWindowIcon(QIcon(get_icon_path()))
 
-    # Check if an instance of the application is already running
-    if is_already_running():
-        print("Another instance is already running.")
-        sys.exit()  # Exit if another instance is running
+# Create the main window
+window = MainWindow(tracker, settings_data)
 
-    # Load tracker app data
-    data = TimeTrackData()
-    settings_data = SettingsData()
-    settings_data.load_settings()
-    data.load_times()
+if window.startup_minimized_tray:
+    window.hide()
+    window.trayIcon.show()
+else:
+    window.show()
+    window.trayIcon.show()
 
-    # Create TimeTracker instance
-    tracker = TimeTracker()
+app.exec()
 
-    # Create the application
-    app = QApplication([])
+# Save the updated process_time
+data.save_times()
 
-    # Set the application icon
-    app.setWindowIcon(QIcon(get_icon_path()))
-
-    # Create a new MainWindow instance
-    window = MainWindow(tracker, settings_data)
-
-    if window.startup_minimized_tray:
-        window.hide()
-        window.trayIcon.show()
-        window.start_tracking()
-    else:
-        window.show()
-        window.trayIcon.show()
-
-    # Connect the application exit signal to release the lock file
-    app.aboutToQuit.connect(release_lock)
-
-    app.exec()
-
-    # Save the updated process_time
-    data.save_times()
-
-    # Save the updated settings
-    settings_data.save_settings()
-
-if __name__ == "__main__":
-    main()
+# Save the updated settings
+settings_data.save_settings()
