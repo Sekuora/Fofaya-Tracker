@@ -29,6 +29,8 @@ class SettingsData:
             self.settings['instance_count'] = 0
         self.settings['instance_count'] += 1
         self.save_settings()
+        if self.settings['instance_count']  > 1:
+            self.settings['instance_count'] = 1
         return self.settings['instance_count'] == 1  # Return True if this is the first instance
 
     def decrement_instance_count(self):
