@@ -240,6 +240,10 @@ class MainWindow(QMainWindow):
 
         self.updateUI()
 
+        # Check Reset
+        self.time_tracker.day_reset.connect(self.reset_tracking)
+        
+
     def top_bar(self):
         # Top Bar
         # Create a QHBoxLayout for the top bar
@@ -264,9 +268,9 @@ class MainWindow(QMainWindow):
 
  
         close_button.clicked.connect(self.close_window)
-        close_button.setFixedHeight(25)  # Set the height to 30 pixels
-        close_button.setFixedWidth(35)  # Set the width to 30 pixels
-        close_button.setIconSize(QSize(25, 25))
+        close_button.setFixedHeight(20)  # Set the height to 30 pixels
+        close_button.setFixedWidth(30)  # Set the width to 30 pixels
+        close_button.setIconSize(QSize(20, 20))
         close_button.setIcon(QIcon(self.close_icon_path))
         close_button.setStyleSheet("""
             QToolButton {
@@ -285,9 +289,9 @@ class MainWindow(QMainWindow):
         maximize_button = QToolButton()
   
         maximize_button.clicked.connect(self.toggleMaximize)
-        maximize_button.setFixedHeight(25)  # Set the height to 30 pixels
-        maximize_button.setFixedWidth(35)  # Set the width to 30 pixels
-        maximize_button.setIconSize(QSize(25, 25))
+        maximize_button.setFixedHeight(20)  # Set the height to 30 pixels
+        maximize_button.setFixedWidth(30)  # Set the width to 30 pixels
+        maximize_button.setIconSize(QSize(20, 20))
         maximize_button.setIcon(QIcon(self.maximize_icon_path))
         maximize_button.setStyleSheet("""
             QToolButton {
@@ -304,9 +308,9 @@ class MainWindow(QMainWindow):
         minimize_button = QToolButton()
        
         minimize_button.clicked.connect(self.minimize)
-        minimize_button.setFixedHeight(25)  # Set the height to 30 pixels
-        minimize_button.setFixedWidth(35)  # Set the width to 30 pixels
-        minimize_button.setIconSize(QSize(25, 25))
+        minimize_button.setFixedHeight(20)  # Set the height to 30 pixels
+        minimize_button.setFixedWidth(30)  # Set the width to 30 pixels
+        minimize_button.setIconSize(QSize(20, 20))
         minimize_button.setIcon(QIcon(self.minimize_icon_path))
         minimize_button.setStyleSheet("""
             QToolButton {
@@ -400,13 +404,14 @@ class MainWindow(QMainWindow):
         self.normalGeometry = self.geometry()
         self.setWindowTitle("Fofaya")
         self.resize(450, 320)
-        self.setMinimumSize(200, 150)
+        self.setMinimumSize(150, 125)
         self.setMaximumSize(1920, 1080)
         # Set the background color to a semi-transparent white
         self.setStyleSheet("""
-                            background-color: rgba(25, 25, 25, 1); 
+                            background-color: rgba(30, 30, 30, 1); 
                             border-radius: 10px;
-                            border: 2px solid rgba(50, 50, 50, 1);
+                            border: 3px solid rgba(120, 120, 120, 1);
+                            
                             """)
         
         self.m_mouse_down = False
@@ -424,13 +429,13 @@ class MainWindow(QMainWindow):
                                             margin-bottom: 0px;
                                             margin-right: 2px;
                                             margin-left: 2px;
-                                            border: 0px solid rgba(70, 70, 70, 1);
+                                            border: 0px solid rgba(90, 90, 90, 1);
                                             """)
 
         # Timer init values
         self.timer_label.setFont(QFont(self.azeret_mono_font, 95))
         self.timer_label.setMinimumSize(QSize(100, 200))
-        self.timer_label.setStyleSheet("margin-bottom: 40px; color: rgba(170, 170, 170, 1); background-color: rgba(0, 0, 0, 0); border: solid 0px;")
+        self.timer_label.setStyleSheet("margin-bottom: 40px; color: rgba(210, 210, 210, 1); background-color: rgba(0, 0, 0, 0); border: solid 0px;")
         self.timer_label.setAlignment(Qt.AlignCenter)
 
         # Start Tracking Button init values
@@ -475,12 +480,12 @@ class MainWindow(QMainWindow):
             # rest of your code
             self.app_name_label.setMinimumSize(QSize(100, 200))
             self.app_name_label.setAlignment(Qt.AlignCenter)
-            self.app_name_label.setStyleSheet("color: rgba(180, 180, 180, 1); margin-top: 20px; padding: 15px; margin-bottom: 20px; border: solid 0px;")
+            self.app_name_label.setStyleSheet("color: rgba(210, 210, 210, 1); margin-top: 20px; padding: 15px; margin-bottom: 20px; border: solid 0px;")
 
         # Timer small ui values
         self.timer_label.setFont(QFont(self.azeret_mono_font, 64))
         self.timer_label.setMinimumSize(QSize(100, 200))
-        self.timer_label.setStyleSheet("margin-bottom: 90px; color: rgba(180, 180, 180, 1); background-color: rgba(0, 0, 0, 0); border: solid 0px;")
+        self.timer_label.setStyleSheet("margin-bottom: 90px; color: rgba(210, 210, 210, 1); background-color: rgba(0, 0, 0, 0); border: solid 0px;")
         self.timer_label.setAlignment(Qt.AlignCenter)
         
 
@@ -525,25 +530,25 @@ class MainWindow(QMainWindow):
         self.app_name_label.setFont(QFont(self.poppins_font, 9))
         self.app_name_label.setMinimumSize(QSize(75, 40))
         self.app_name_label.setAlignment(Qt.AlignCenter)
-        self.app_name_label.setStyleSheet("color: rgba(180, 180, 180, 1); margin-top: 0px; padding: 0 px; margin-bottom: 0px; border: solid 0px;")
+        self.app_name_label.setStyleSheet("color: rgba(210, 210, 210, 1); margin-top: 0px; padding: 0 px; margin-bottom: 0px; border: solid 0px;")
 
         # Timer minimum ui values
-        self.timer_label.setFont(QFont(self.azeret_mono_font, 24))
+        self.timer_label.setFont(QFont(self.azeret_mono_font, 19))
         self.timer_label.setMinimumSize(QSize(100, 200))
-        self.timer_label.setStyleSheet("margin-bottom: 170px; margin-top: 0px; color: rgba(180, 180, 180, 1); background-color: rgba(0, 0, 0, 0); border: solid 0px;")
+        self.timer_label.setStyleSheet("margin-bottom: 170px; margin-top: 0px; color: rgba(210, 210, 210, 1); background-color: rgba(0, 0, 0, 0); border: solid 0px;")
         self.timer_label.setAlignment(Qt.AlignCenter)
         
 
         self.start_button.setFont(QFont(self.poppins_semi_bold_font, 7))
-        self.start_button.setFixedWidth(85)
-        self.start_button.setFixedHeight(60)
+        self.start_button.setFixedWidth(75)
+        self.start_button.setFixedHeight(50)
         self.start_button.setStyleSheet("""
             QToolButton {
                 background-color: rgba(40, 40, 40, 0.8);
                 border-radius: 10px;
                 color: rgba(210, 210, 210, 0.8);
-                margin-bottom: 25px;
-                margin-top: 10px;
+                margin-bottom: 20px;
+                margin-top: 5px;
                 border: 0px solid rgba(70, 70, 70, 0.8);
                 
             }
@@ -735,6 +740,26 @@ class MainWindow(QMainWindow):
             self.start_button.setChecked(False)
             self.start_button.setText('Start Tracking')
     
+    def reset_tracking(self, reset):
+        if reset:
+            self.time_tracker.stop()
+            self.show_notification("Fofaya Reset")
+            self.start_button.setText('Start Tracking')
+            self.startTrackingAction.setChecked(False)
+            self.startTrackingAction.setText("Start Tracking")
+
+            self.time_tracker.start()
+            self.startTrackingAction.setText('Stop Tracking')
+            self.start_button.setChecked(True)
+            self.start_button.setText('Stop Tracking')
+    
+    def tracking_onDemand(self):
+        self.time_tracker.start()
+        self.show_notification("Fofaya started")
+        self.startTrackingAction.setText('Stop Tracking')
+        self.start_button.setChecked(True)
+        self.start_button.setText('Stop Tracking')
+    
     def show_notification(self, message):
         # Create a QLabel
         self.label = QLabel()
@@ -893,13 +918,13 @@ class MainWindow(QMainWindow):
         contextMenu.addSeparator()
 
         # Create the logs Window action
-        logsAction = QAction("View Usage Data", self)
+        logsAction = QAction("View App Time Logs", self)
         logsAction.triggered.connect(self.showLogs)  # Connect to the method that shows the logs
         logsAction.setToolTip("Opens usage data window")
         contextMenu.addAction(logsAction)
       
         # Create the logs Window action
-        logsManagerAction = QAction("Manage Usage Data", self)
+        logsManagerAction = QAction("Manage Logs Data", self)
         logsManagerAction.setToolTip("Opens usage data manager window")
         logsManagerAction.triggered.connect(self.showLogsManger)  # Connect to the method that shows the logs
         contextMenu.addAction(logsManagerAction)

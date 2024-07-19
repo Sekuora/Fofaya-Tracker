@@ -17,6 +17,8 @@ import win32api
 class TimeTracker(QThread):
     update_label = Signal(str, str)
     data_updated = Signal()  # New signal
+    day_reset = Signal(bool)  # Signal to indicate day reset
+
     def __init__(self):
         super().__init__()
   
@@ -24,10 +26,10 @@ class TimeTracker(QThread):
         self.current_app = None
         self.time_track_data = TimeTrackData()  # Create an instance of TimeTrackData
         self.excluded_apps = ["Fofaya"]
+        self.current_date = datetime.now().strftime('%d/%m/%Y')  # Track the current date
 
-    # In TimeTracker class
+    
     def run(self):
-
         global process_time
         self.is_running = True
         save_counter = 0
@@ -35,18 +37,25 @@ class TimeTracker(QThread):
             start_time = time.time()
 
             new_app = self.get_current_app()
-            if new_app is not None and new_app != self.current_app:  # Check if the current app is in the ignore list
+            new_date = datetime.now().strftime('%d/%m/%Y')
+
+            # Check for date change
+            if new_date != self.current_date:
+                self.current_date = new_date
+                self.check_day_reset()  # Emit signal or handle day reset here
+
+            if new_app is not None and new_app != self.current_app:
                 self.current_app = new_app
-                current_date = datetime.now().strftime('%d/%m/%Y')
-                if self.current_app not in process_time.keys():
+                if self.current_app not in process_time:
                     process_time[self.current_app] = {}
-                if current_date not in process_time[self.current_app].keys():
-                    process_time[self.current_app][current_date] = 0
+                if self.current_date not in process_time[self.current_app]:
+                    process_time[self.current_app][self.current_date] = 0
 
             if self.current_app is not None and self.current_app != "Idle":
-                current_date = datetime.now().strftime('%d/%m/%Y')
-                process_time[self.current_app][current_date] += 1
-                formatted_time = self.format_time(process_time[self.current_app][current_date])
+                if self.current_date not in process_time[self.current_app]:
+                    process_time[self.current_app][self.current_date] = 0
+                process_time[self.current_app][self.current_date] += 1
+                formatted_time = self.format_time(process_time[self.current_app][self.current_date])
             else:
                 formatted_time = "00:00:00"
 
@@ -62,7 +71,15 @@ class TimeTracker(QThread):
             execution_time = end_time - start_time
             sleep_time = max(1.0 - execution_time, 0)
             time.sleep(sleep_time)
-    
+
+    def check_day_reset(self):
+        new_date = datetime.now().strftime('%d/%m/%Y')
+        if new_date != self.current_date:
+            self.current_date = new_date
+            self.day_reset.emit(True)  # Emit signal indicating day reset
+        else:
+            self.day_reset.emit(False)  # Emit signal indicating no reset
+
     def get_window_title(self, pid):
         def callback(hwnd, hwnds):
             if win32gui.IsWindowVisible(hwnd) and win32process.GetWindowThreadProcessId(hwnd)[1] == pid:
@@ -72,7 +89,7 @@ class TimeTracker(QThread):
         hwnds = []
         win32gui.EnumWindows(callback, hwnds)
         return win32gui.GetWindowText(hwnds[0]) if hwnds else None
-    
+
     def is_helpful(self, name):
         return name and len(name) <= 50
 
@@ -105,7 +122,10 @@ class TimeTracker(QThread):
 
                 # Create a dictionary to map specific exe names to their desired display names
                 exe_name_mapping = {
-                    "Epicgameslauncher": "Epic Games Launcher"
+                    "Epicgameslauncher": "Epic Games Launcher",
+                    "Steamwebhelper" : "Steam",
+                    "Eadesktop" : "EA",
+                    "Unrealeditor" : "Unreal Engine"
                     # Add more mappings here if needed
                 }
 
