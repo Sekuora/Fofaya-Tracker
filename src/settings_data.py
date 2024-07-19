@@ -24,6 +24,7 @@ class SettingsData:
         with open(self.settings_file, 'w') as f:
             json.dump(self.settings, f, indent=4)
 
+<<<<<<< Updated upstream
     def increment_instance_count(self):
         if 'instance_count' not in self.settings:
             self.settings['instance_count'] = 0
@@ -32,6 +33,19 @@ class SettingsData:
         if self.settings['instance_count']  > 1:
             self.settings['instance_count'] = 1
         return self.settings['instance_count'] == 1  # Return True if this is the first instance
+=======
+    
+    def increment_instance_count(self):
+        if 'instance_count' not in self.settings:
+            self.settings['instance_count'] = 0
+        
+        self.settings['instance_count'] += 1
+        if self.settings['instance_count'] > 1:
+            self.settings['instance_count'] = 1
+        
+        self.save_settings()
+        return self.settings['instance_count'] == 1   # Return True if this is the first instance
+>>>>>>> Stashed changes
 
     def decrement_instance_count(self):
         if 'instance_count' in self.settings and self.settings['instance_count'] > 0:
