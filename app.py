@@ -68,6 +68,8 @@ atexit.register(cleanup)
 
 app.exec()
 
+cleanup()
+
 # Save the updated process_time
 data.save_times()
 
