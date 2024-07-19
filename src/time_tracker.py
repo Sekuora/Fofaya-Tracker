@@ -33,7 +33,7 @@ class TimeTracker(QThread):
         save_counter = 0
         while self.is_running:
             start_time = time.time()
-            # Main Tracker Functionality
+
             new_app = self.get_current_app()
             if new_app is not None and new_app != self.current_app:  # Check if the current app is in the ignore list
                 self.current_app = new_app
@@ -63,7 +63,6 @@ class TimeTracker(QThread):
             sleep_time = max(1.0 - execution_time, 0)
             time.sleep(sleep_time)
     
-    # Main window title gathering functionality
     def get_window_title(self, pid):
         def callback(hwnd, hwnds):
             if win32gui.IsWindowVisible(hwnd) and win32process.GetWindowThreadProcessId(hwnd)[1] == pid:
@@ -106,10 +105,7 @@ class TimeTracker(QThread):
 
                 # Create a dictionary to map specific exe names to their desired display names
                 exe_name_mapping = {
-                    "Epicgameslauncher": "Epic Games Launcher",
-                    "Steamwebhelper" : "Steam",
-                    "Eadesktop" : "EA",
-                    "Unrealeditor" : "Unreal Engine"
+                    "Epicgameslauncher": "Epic Games Launcher"
                     # Add more mappings here if needed
                 }
 

@@ -1,26 +1,3 @@
 # Ignore documents created by the tracker
 app_times.json
 settings.json
-
-
-# Ignore Python compiled files
-**/__pycache__/
-*.py[cod]
-
-# Ignore build output directory
-/build/
-
-# Ignore distribution packages
-/dist/
-
-# Ignore environment settings
-.env
-.venv
-
-# Ignore logs
-*.log
-
-# Ignore temporary files
-*.tmp
-*.temp
-/src/__pycache__
